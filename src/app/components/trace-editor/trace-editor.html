@@ -1,0 +1,28 @@
+<div class="trace-container">
+  <h3>Scenario Editor</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Var</th>
+        @for (step of trace(); track $index) {
+        <th [class.active]="$index === time()">t={{ $index }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (varName of variables(); track varName) {
+      <tr>
+        <td class="var-label">{{ varName }}</td>
+        @for (step of trace(); track $index) {
+        <td
+          (click)="toggleValue($index, varName)"
+          [class.is-true]="step[varName]"
+          [class.is-active]="$index === time()"
+          class="cell"
+        ></td>
+        }
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

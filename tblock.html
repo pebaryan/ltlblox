@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LTL Transparent Frame Preview</title>
+    <style>
+      body {
+        margin: 0;
+        background: radial-gradient(circle, #333, #000);
+        overflow: hidden;
+      }
+      .controls {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: white;
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <b>Left:</b> Solid Proposition Block (p) | <b>Right:</b> Transparent
+      Temporal Frame (Always)
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(0, 1.5, 4);
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      document.body.appendChild(renderer.domElement);
+
+      // Lighting (Crucial for transparency)
+      const light = new THREE.DirectionalLight(0xffffff, 2);
+      light.position.set(2, 5, 5);
+      scene.add(light);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+      // 1. SOLID MATERIAL (for Propositions)
+      const solidMat = new THREE.MeshPhysicalMaterial({
+        color: 0xff4444,
+        roughness: 0.1,
+        clearcoat: 1.0,
+      });
+
+      // 2. TRANSPARENT MATERIAL (for ALWAYS/EVENTUALLY)
+      const glassMat = new THREE.MeshPhysicalMaterial({
+        color: 0x00aaff,
+        transmission: 1.0, // High transparency
+        roughness: 0.05,
+        thickness: 0.5, // Refraction depth
+        ior: 1.45, // Index of refraction
+        clearcoat: 1.0,
+        transparent: true,
+        opacity: 1,
+      });
+
+      const geo = new THREE.BoxGeometry(1, 1, 1);
+
+      const solidCube = new THREE.Mesh(geo, solidMat);
+      solidCube.position.x = -1;
+      scene.add(solidCube);
+
+      // Frame block (scaled to look like an Always operator)
+      const frameCube = new THREE.Mesh(geo, glassMat);
+      frameCube.position.x = 1;
+      frameCube.scale.set(1.5, 2, 1);
+      scene.add(frameCube);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        solidCube.rotation.y += 0.01;
+        frameCube.rotation.y += 0.01;
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+    </script>
+  </body>
+</html>

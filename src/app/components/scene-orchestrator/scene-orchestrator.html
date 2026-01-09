@@ -1,0 +1,33 @@
+<th-ambientLight [intensity]="0.8" />
+<th-pointLight [position]="[5, 10, 5]" [intensity]="1" />
+
+<th-gridHelper
+  [args]="[100, 100, '#222', '#222']"
+  [position]="[0, -0.5, 0]"
+  [rotation]="[0, 0, 0]"
+>
+</th-gridHelper>
+
+@for (block of flatFormula(); track $index) {
+<app-lego-block
+  [pos]="block.position"
+  [type]="block.node.type"
+  [isSatisfied]="checkLogic(block.node)"
+>
+</app-lego-block>
+
+@if (block.node.type === 'EVENTUALLY' && checkLogic(block.node)) {
+<app-logic-link [start]="block.position" [end]="[findSatisfyingTime(block.node), -0.5, 0]">
+</app-logic-link>
+} 
+
+@if (block.node.type === 'ALWAYS' && checkLogic(block.node)) {
+  @for (tStep of remainingTimeSteps(block.position[0]); track $index) {
+    <app-logic-link 
+      [start]="block.position" 
+      [end]="[tStep, -0.5, 0]">
+    </app-logic-link>
+  }
+}
+
+}

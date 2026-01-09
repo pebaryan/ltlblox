@@ -1,0 +1,17 @@
+.palette {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: white;
+}
+button {
+  cursor: pointer;
+  padding: 5px;
+  text-align: left;
+}

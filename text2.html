@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LTL Logic Blocks - Stable Build</title>
+    <style>
+      body {
+        margin: 0;
+        background-color: #111;
+        overflow: hidden;
+        font-family: sans-serif;
+      }
+      .ui {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: white;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui">
+      <h1>LTL Block Preview</h1>
+      <p>Reliable Canvas Textures (No CORS/External dependencies)</p>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+      // --- Scene Setup ---
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(3, 3, 5);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      document.body.appendChild(renderer.domElement);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+      const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+      sun.position.set(5, 10, 7);
+      scene.add(sun);
+
+      // --- Helper: Create Texture via Canvas ---
+      function createTextTexture(text, bgColor, isTransparent = false) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext("2d");
+
+        if (!isTransparent) {
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(0, 0, 512, 512);
+        }
+
+        ctx.fillStyle = "white";
+        ctx.font = "bold 80px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 256, 256);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        return texture;
+      }
+
+      // --- 1. Solid Proposition Block (p) ---
+      const pTexture = createTextTexture("p", "#ff4444");
+      const pMatSide = new THREE.MeshPhysicalMaterial({
+        color: 0xff4444,
+        roughness: 0.1,
+        clearcoat: 1.0,
+      });
+      const pMatFront = new THREE.MeshPhysicalMaterial({
+        map: pTexture,
+        roughness: 0.1,
+        clearcoat: 1.0,
+      });
+
+      const pBlock = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), [
+        pMatSide,
+        pMatSide,
+        pMatSide,
+        pMatSide,
+        pMatFront,
+        pMatSide,
+      ]);
+      pBlock.position.x = -1.5;
+      scene.add(pBlock);
+
+      // --- 2. Transparent Temporal Frame (Always) ---
+      // We use a group to represent the "Frame"
+      const frameGroup = new THREE.Group();
+
+      const frameTexture = createTextTexture("ALWAYS □", "#00aaff", true);
+      const frameMat = new THREE.MeshPhysicalMaterial({
+        color: 0x00aaff,
+        transmission: 1.0,
+        thickness: 0.5,
+        roughness: 0.05,
+        transparent: true,
+        opacity: 0.5,
+      });
+
+      // Material with the text overlay for the frame
+      const frameTextMat = frameMat.clone();
+      frameTextMat.alphaMap = frameTexture; // Use the canvas as an alpha map for the text
+      frameTextMat.transparent = true;
+
+      const frameMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(2, 2.5, 1),
+        frameMat
+      );
+      frameGroup.add(frameMesh);
+      frameGroup.position.x = 1.5;
+      scene.add(frameGroup);
+
+      // --- Animation ---
+      function animate() {
+        requestAnimationFrame(animate);
+        pBlock.rotation.y += 0.01;
+        frameGroup.rotation.y += 0.005;
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+    </script>
+  </body>
+</html>

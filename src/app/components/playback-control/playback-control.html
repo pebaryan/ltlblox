@@ -1,0 +1,7 @@
+<div class="controls-overlay">
+  <button (click)="prev()">Back</button>
+  <button (click)="togglePlay()">{{ isPlaying() ? 'Pause' : 'Play' }}</button>
+  <button (click)="next()">Forward</button>
+
+  <div class="timeline-info">Time: {{ time() }} / {{ maxTime() - 1 }}</div>
+</div>

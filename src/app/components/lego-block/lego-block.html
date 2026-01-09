@@ -1,0 +1,15 @@
+<th-group [position]="pos">
+      <th-mesh>
+        <th-boxGeometry [args]="[0.9, 0.8, 0.9]" /> <th-meshStandardMaterial 
+          [color]="_color() | color" 
+          [emissive]="(isSatisfied ? _color() : 'black') | color"
+          [emissiveIntensity]="isSatisfied ? 2 : 0"
+          [roughness]="0.2"
+        />
+      </th-mesh>
+
+      <th-mesh [position]="[0, 0.45, 0]">
+        <th-cylinderGeometry [args]="[0.3, 0.3, 0.2, 16]" />
+        <th-meshStandardMaterial [color]="_color() | color" [roughness]="0.2" />
+      </th-mesh>
+    </th-group>
