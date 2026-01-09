@@ -17,16 +17,17 @@
 </app-lego-block>
 
 @if (block.node.type === 'EVENTUALLY' && checkLogic(block.node)) {
-<app-logic-link [start]="block.position" [end]="[findSatisfyingTime(block.node), -0.5, 0]">
+@let targetX = findSatisfyingTime(block.node);
+
+<app-logic-link [start]="block.position" [end]="[targetX, -0.5, 0]">
 </app-logic-link>
 } 
 
 @if (block.node.type === 'ALWAYS' && checkLogic(block.node)) {
-  @for (tStep of remainingTimeSteps(block.position[0]); track $index) {
+  @for (step of getAlwaysSteps(block.position[0]); track step) {
     <app-logic-link 
       [start]="block.position" 
-      [end]="[tStep, -0.5, 0]">
-    </app-logic-link>
+      [end]="[step, -0.5, 0]" />
   }
 }
 

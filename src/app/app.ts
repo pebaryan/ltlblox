@@ -5,10 +5,11 @@ import { TraceEditor } from './components/trace-editor/trace-editor';
 import { PlaybackControl } from './components/playback-control/playback-control';
 import { currentTime } from './state/formula';
 import * as THREE from 'three';
+import { LogicPalette } from "./components/logic-palette/logic-palette";
 
 @Component({
   selector: 'app-root',
-  imports: [NgxThreeModule, SceneOrchestrator, TraceEditor, PlaybackControl],
+  imports: [NgxThreeModule, SceneOrchestrator, TraceEditor, PlaybackControl, LogicPalette],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

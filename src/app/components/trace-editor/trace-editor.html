@@ -1,28 +1,31 @@
-<div class="trace-container">
-  <h3>Scenario Editor</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Var</th>
-        @for (step of trace(); track $index) {
-        <th [class.active]="$index === time()">t={{ $index }}</th>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      @for (varName of variables(); track varName) {
-      <tr>
-        <td class="var-label">{{ varName }}</td>
-        @for (step of trace(); track $index) {
-        <td
-          (click)="toggleValue($index, varName)"
-          [class.is-true]="step[varName]"
-          [class.is-active]="$index === time()"
-          class="cell"
-        ></td>
-        }
-      </tr>
+<div class="trace-editor trace-container">
+  <div class="timeline-grid">
+    <div class="row header">
+      <div class="label">Var / Time</div>
+      @for (step of traceState(); track $index) {
+        <div class="time-index" [class.active]="currentTime() === $index">
+          {{ $index }}
+        </div>
       }
-    </tbody>
-  </table>
+    </div>
+
+    @for (varName of traceVariables(); track varName) {
+      <div class="row">
+        <div class="label">
+          {{ varName }}
+          <button class="delete-var-btn" (click)="deleteVar(varName)">×</button>
+        </div>
+        @for (step of traceState(); track $index) {
+          <div 
+            class="cell" 
+            [class.true]="step[varName]"
+            (click)="toggleStep($index, varName)">
+            <div class="led"></div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+  
+  <button class="add-var-btn" (click)="addNewVariable()">+ Add Variable</button>
 </div>

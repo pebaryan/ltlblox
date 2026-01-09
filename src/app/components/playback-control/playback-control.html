@@ -1,7 +1,28 @@
-<div class="controls-overlay">
-  <button (click)="prev()">Back</button>
-  <button (click)="togglePlay()">{{ isPlaying() ? 'Pause' : 'Play' }}</button>
-  <button (click)="next()">Forward</button>
+<div class="playback-container">
+  <button class="control-btn" (click)="stepBack()" [disabled]="currentTime() <= 0">
+    «
+  </button>
 
-  <div class="timeline-info">Time: {{ time() }} / {{ maxTime() - 1 }}</div>
+  <button class="control-btn" (click)="togglePlay()">
+    {{ isPlaying() ? '⏸' : '▶' }}
+  </button>
+
+  <button class="control-btn" (click)="stepForward()" [disabled]="currentTime() >= traceLength() - 1">
+    »
+  </button>
+
+  <div class="timeline-info">
+    <span class="step-label">Time Step</span>
+    <span class="step-value">{{ currentTime() }}</span>
+  </div>
+
+  <div class="slider-wrapper">
+    <input 
+      type="range" 
+      [min]="0" 
+      [max]="traceLength() - 1" 
+      [value]="currentTime()"
+      (input)="onSliderChange($event)"
+    />
+  </div>
 </div>

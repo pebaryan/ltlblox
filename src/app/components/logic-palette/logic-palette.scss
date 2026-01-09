@@ -1,17 +1,150 @@
-.palette {
+.logic-palette {
   position: absolute;
   top: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 10px;
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  color: white;
+  right: 20px;
+  width: 280px;
+
+  background: rgba(25, 25, 25, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #eee;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 100; // Ensure it stays above the 3D canvas
+  font-family: 'Segoe UI', system-ui, sans-serif;
+
+  h3 {
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+  }
 }
-button {
-  cursor: pointer;
-  padding: 5px;
-  text-align: left;
+
+.formula-code {
+  background: #000;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #333;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  code {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: #52b788; // Matching our green pipe color
+    text-shadow: 0 0 8px rgba(82, 183, 136, 0.4);
+  }
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  button {
+    background: #333;
+    border: 1px solid #444;
+    color: white;
+    padding: 12px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+
+    span {
+      font-size: 0.7rem;
+      opacity: 0.6;
+      text-transform: uppercase;
+    }
+
+    &:hover {
+      background: #444;
+      border-color: #666;
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    // Color coding to match 3D Blocks
+    &.btn-always {
+      border-bottom: 4px solid #3b82f6;
+      &:hover {
+        background: rgba(59, 130, 246, 0.2);
+      }
+    }
+    &.btn-eventually {
+      border-bottom: 4px solid #10b981;
+      &:hover {
+        background: rgba(16, 185, 129, 0.2);
+      }
+    }
+    &.btn-not {
+      border-bottom: 4px solid #ef4444;
+    }
+  }
+
+  .btn-full {
+    grid-column: span 2;
+    margin-top: 10px;
+    background: #222;
+    border-color: #ef4444;
+    color: #ef4444;
+
+    &:hover {
+      background: #ef4444;
+      color: white;
+    }
+  }
+}
+
+.variable-selector {
+  margin-bottom: 1.5rem;
+
+  span {
+    font-size: 0.7rem;
+    color: #888;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .var-chips {
+    display: flex;
+    gap: 8px;
+
+    button {
+      flex: 1;
+      background: #222;
+      border: 1px solid #444;
+      color: #fff;
+      padding: 6px;
+      border-radius: 4px;
+      font-family: 'Fira Code', monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: #3b82f6;
+      }
+
+      &.active {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+      }
+    }
+  }
 }

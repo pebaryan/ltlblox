@@ -1,13 +1,81 @@
-.controls-overlay {
+.playback-container {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  padding: 15px;
-  border-radius: 8px;
-  color: white;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 15px;
+  background: rgba(20, 20, 20, 0.8);
+  backdrop-filter: blur(12px);
+  padding: 10px 25px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   z-index: 100;
+}
+
+.control-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 1.2rem;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #10b981; // Matching eventually/success green
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
+
+.timeline-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+
+  .step-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 1px;
+  }
+
+  .step-value {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
+.slider-wrapper {
+  display: flex;
+  align-items: center;
+  width: 200px;
+  
+  input[type='range'] {
+    width: 100%;
+    cursor: pointer;
+    accent-color: #3b82f6; // Matching Always blue
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+  }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 export interface LTLNode {
-  type: 'PROPOSITION' | 'NOT' | 'AND' | 'OR' | 'NEXT' | 'ALWAYS' | 'EVENTUALLY';
+  type: 'PROPOSITION' | 'NOT' | 'AND' | 'OR' | 'NEXT' | 'ALWAYS' | 'EVENTUALLY' | 'UNTIL';
   variableId?: string;
   children?: LTLNode[];
 }
@@ -17,7 +17,11 @@ export class LtlEvaluator {
 
     switch (node.type) {
       case 'PROPOSITION':
-        return trace[t][node.variableId!] || false;
+        // return trace[t][node.variableId!] || false;
+        const varName = node.variableId!;
+        // If the variable doesn't exist in the trace, return false
+        return !!trace[t]?.[varName];
+
       case 'NOT':
         return !this.evaluate(node.children![0], trace, t);
       case 'AND':

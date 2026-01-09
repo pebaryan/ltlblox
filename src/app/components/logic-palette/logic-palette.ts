@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { formulaState } from '../../state/formula';
+import { Component, computed } from '@angular/core';
+import { formulaState, currentFormulaString, updateProposition } from '../../state/formula';
+import { LTLNode } from '../../core/ltl-evaluator';
+import { traceVariables } from '../../state/trace';
 
 @Component({
   selector: 'app-logic-palette',
@@ -9,13 +11,49 @@ import { formulaState } from '../../state/formula';
   styleUrl: './logic-palette.scss',
 })
 export class LogicPalette {
-  setFormula(type: any) {
-    // For now, we just swap the top-level formula
-    // Later we can implement a real tree-builder
+  public availableVars = traceVariables;
+  public formulaDisplay = currentFormulaString;
+
+  addAlways() {
+    this.wrapFormula('ALWAYS');
+  }
+  addEventually() {
+    this.wrapFormula('EVENTUALLY');
+  }
+  addNot() {
+    this.wrapFormula('NOT');
+  }
+  reset(v: string) {
+    this.resetFormula(v);
+  }
+
+  wrapFormula(type: 'ALWAYS' | 'EVENTUALLY' | 'NOT') {
+    const current = formulaState();
+
     formulaState.set({
       type: type,
-      variableId: type === 'PROPOSITION' ? 'p' : undefined,
-      children: type === 'PROPOSITION' ? [] : [{ type: 'PROPOSITION', variableId: 'q' }],
+      children: [current], // The old formula becomes the child (the floor below)
     });
+  }
+
+  resetFormula(varId: string) {
+    formulaState.set({
+      type: 'PROPOSITION',
+      variableId: varId,
+      children: [],
+    });
+  }
+
+  public currentVar = computed(() => {
+    const findVar = (node: LTLNode): string => {
+      if (node.type === 'PROPOSITION') return node.variableId || '';
+      if (node.children?.[0]) return findVar(node.children[0]);
+      return '';
+    };
+    return findVar(formulaState());
+  });
+
+  setVar(v: string) {
+    updateProposition(v);
   }
 }

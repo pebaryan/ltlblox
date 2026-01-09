@@ -1,6 +1,5 @@
 <th-group>
-  <th-mesh>
-    <th-tubeGeometry [args]="[pipePath(), 64, 0.06, 8, false]" />
+  <th-mesh #pipeMesh>
     <th-meshStandardMaterial
       [color]="'#52b788' | color"
       [emissive]="'#52b788' | color"
@@ -8,13 +7,22 @@
     />
   </th-mesh>
 
-  <th-mesh [position]="start">
+  <th-mesh [position]="start()">
     <th-cylinderGeometry [args]="[0.12, 0.12, 0.2, 16]" />
-    <th-meshStandardMaterial [color]="'#333' | color" />
+    <th-meshStandardMaterial
+      [color]="'#52b788' | color"
+      [emissive]="'#52b788' | color"
+      [emissiveIntensity]="1"
+    />
   </th-mesh>
 
-  <th-mesh [position]="end">
+  <th-mesh [position]="end()">
     <th-cylinderGeometry [args]="[0.12, 0.12, 0.2, 16]" />
-    <th-meshStandardMaterial [color]="'#333' | color" />
+    <th-meshStandardMaterial
+      [color]="'#52b788' | color"
+      [emissive]="'#52b788' | color"
+      [emissiveIntensity]="1"
+    />
   </th-mesh>
+  {{ end | json }}
 </th-group>

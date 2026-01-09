@@ -5,13 +5,14 @@
     <th-scene [background]="'#111' | color">
       <app-scene-orchestrator />
 
-      <th-orbitControls />
+      <th-orbitControls #orbitControls/>
 
       <th-ambientLight [intensity]="0.8" />
       <th-pointLight [position]="[10, 10, 10]" />
     </th-scene>
   </th-canvas>
 
+  <app-logic-palette />
   <app-trace-editor />
   <app-playback-control />
 </div>

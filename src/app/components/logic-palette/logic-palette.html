@@ -1,6 +1,41 @@
-<div class="palette">
-  <h4>Operators</h4>
-  <button (click)="setFormula('ALWAYS')">☐ Always (Blue)</button>
-  <button (click)="setFormula('EVENTUALLY')">◇ Eventually (Green)</button>
-  <button (click)="setFormula('PROPOSITION')">p (Red)</button>
+<div class="logic-palette">
+  <h3>LTL Constructor</h3>
+  
+  <div class="formula-code">
+    <code>{{ formulaDisplay() }}</code>
+  </div>
+
+  <div class="variable-selector">
+    <span>Assign Variable:</span>
+    <div class="var-chips">
+      @for (v of availableVars(); track v) {
+        <button 
+          [class.active]="currentVar() === v"
+          (click)="setVar(v)">
+          {{ v }}
+        </button>
+      } @empty {
+        <em style="font-size: 0.7rem; color: #666;">No variables in trace</em>
+      }
+    </div>
+  </div>
+
+  <div class="button-grid">
+    <button class="btn-always" (click)="addAlways()">
+      □ <span>Always</span>
+    </button>
+    <button class="btn-eventually" (click)="addEventually()">
+      ◇ <span>Eventually</span>
+    </button>
+    <button class="btn-not" (click)="addNot()">
+      ¬ <span>Not</span>
+    </button>
+    <button (click)="reset(currentVar())">
+      {{ currentVar() }} <span>Prop</span>
+    </button>
+    
+    <button class="btn-full" (click)="reset('p')">
+      RESET TO P
+    </button>
+  </div>
 </div>
