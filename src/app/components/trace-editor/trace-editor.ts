@@ -2,6 +2,15 @@ import { Component, computed } from '@angular/core';
 import { currentTime } from '../../state/formula';
 import { removeVariable, traceState, traceVariables, addTimeStep, removeTimeStep } from '../../state/trace';
 
+function sanitizeVarName(input: string): string {
+  let sanitized = input.trim().toLowerCase();
+  sanitized = sanitized.replace(/\s+/g, '');
+  if (sanitized.length > 10) {
+    sanitized = sanitized.substring(0, 10);
+  }
+  return sanitized;
+}
+
 @Component({
   selector: 'app-trace-editor',
   standalone: true,
@@ -46,15 +55,27 @@ export class TraceEditor {
   }
 
   addNewVariable() {
-    const name = prompt('Enter variable name:');
-    if (name && name.trim()) {
-      traceState.update((current) =>
-        current.map((step) => ({
-          ...step,
-          [name.trim()]: false,
-        }))
-      );
+    const name = prompt('Enter variable name (lowercase, max 10 chars):');
+    if (!name) return;
+    
+    const sanitized = sanitizeVarName(name);
+    
+    if (!sanitized) {
+      alert('Invalid variable name');
+      return;
     }
+    
+    if (this.traceVariables().includes(sanitized)) {
+      alert(`Variable '${sanitized}' already exists`);
+      return;
+    }
+    
+    traceState.update((current) =>
+      current.map((step) => ({
+        ...step,
+        [sanitized]: false,
+      }))
+    );
   }
 
   addTime() {
