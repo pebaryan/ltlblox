@@ -6,7 +6,17 @@
   </div>
 
   <div class="variable-selector">
-    <span>Assign Variable:</span>
+    <span>Edit Proposition:</span>
+    <div class="prop-selector">
+      @for (prop of propositionIndices(); track $index) {
+        <button 
+          [class.selected]="selectedIndex() === $index"
+          (click)="selectProposition($index)">
+          P{{ $index }}
+        </button>
+      }
+    </div>
+    <span>Set Value:</span>
     <div class="var-chips">
       @for (v of availableVars(); track v) {
         <button 

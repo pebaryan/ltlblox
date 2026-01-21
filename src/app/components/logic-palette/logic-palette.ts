@@ -1,5 +1,5 @@
 import { Component, computed } from '@angular/core';
-import { formulaState, currentFormulaString, updateProposition } from '../../state/formula';
+import { formulaState, currentFormulaString, updateProposition, selectedPropositionIndex, getPropositionCount } from '../../state/formula';
 import { LTLNode } from '../../core/ltl-evaluator';
 import { traceVariables } from '../../state/trace';
 
@@ -79,7 +79,22 @@ export class LogicPalette {
     return findVar(formulaState());
   });
 
+  public propositionCount = computed(() => getPropositionCount());
+  public propositionIndices = computed(() => 
+    Array.from({ length: this.propositionCount() }, (_, i) => i)
+  );
+  public selectedIndex = selectedPropositionIndex;
+
+  selectProposition(index: number | null) {
+    selectedPropositionIndex.set(index);
+  }
+
   setVar(v: string) {
-    updateProposition(v);
+    const index = this.selectedIndex();
+    if (index !== null) {
+      updateProposition(v, index);
+    } else {
+      updateProposition(v, 0);
+    }
   }
 }

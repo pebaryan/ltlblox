@@ -49,14 +49,23 @@ export const formulaState = signal<LTLNode>(initialFormula);
 
 export const currentTime = signal<number>(0);
 
-export function updateProposition(newVar: string) {
-  const root = formulaState();
+export const selectedPropositionIndex = signal<number | null>(null);
 
-  // Recursive function to find and update the first proposition found
-  // (In a more complex app, you'd track the 'selected' node)
+export function updateProposition(newVar: string, targetIndex?: number) {
+  const root = formulaState();
+  const target = targetIndex ?? selectedPropositionIndex();
+
+  if (target === null) return;
+
+  let currentIndex = 0;
   const updateNode = (node: LTLNode): LTLNode => {
     if (node.type === 'PROPOSITION') {
-      return { ...node, variableId: newVar };
+      if (currentIndex === target) {
+        currentIndex++;
+        return { ...node, variableId: newVar };
+      }
+      currentIndex++;
+      return node;
     }
     if (node.children && node.children.length > 0) {
       return { ...node, children: node.children.map((c) => updateNode(c)) };
@@ -65,6 +74,16 @@ export function updateProposition(newVar: string) {
   };
 
   formulaState.set(updateNode(root));
+}
+
+export function getPropositionCount(): number {
+  let count = 0;
+  const countNode = (node: LTLNode) => {
+    if (node.type === 'PROPOSITION') count++;
+    if (node.children) node.children.forEach(countNode);
+  };
+  countNode(formulaState());
+  return count;
 }
 
 export function wrapUntil() {
