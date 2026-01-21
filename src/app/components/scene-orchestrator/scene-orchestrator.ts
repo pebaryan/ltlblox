@@ -16,6 +16,7 @@ import { traceState } from '../../state/trace';
 })
 export class SceneOrchestrator {
   private ltlService = inject(LtlEvaluator);
+  currentTime = currentTime;
 
   // // This computed signal flattens your LTL Tree into a 3D Grid
   // flatFormula = computed(() => {

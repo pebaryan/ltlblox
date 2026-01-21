@@ -8,11 +8,14 @@ export interface FlatBlock {
 
 export function flattenFormula(node: LTLNode, x: number, y: number, list: FlatBlock[] = []): FlatBlock[] {
   const colors: Record<string, string> = {
-    'PROPOSITION': '#ef4444', 
-    'ALWAYS': '#3b82f6',      
-    'EVENTUALLY': '#10b981',  
+    'PROPOSITION': '#ef4444',
+    'ALWAYS': '#3b82f6',
+    'EVENTUALLY': '#10b981',
     'NOT': '#f87171',
     'AND': '#f59e0b',
+    'OR': '#8b5cf6',
+    'NEXT': '#f97316',
+    'UNTIL': '#06b6d4',
   };
 
   // 1. Add current node at the current Y level

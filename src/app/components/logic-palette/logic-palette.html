@@ -27,13 +27,27 @@
     <button class="btn-eventually" (click)="addEventually()">
       ◇ <span>Eventually</span>
     </button>
+    <button class="btn-next" (click)="addNext()">
+      ○ <span>Next</span>
+    </button>
     <button class="btn-not" (click)="addNot()">
       ¬ <span>Not</span>
     </button>
+
+    <button class="btn-and" (click)="addAnd()">
+      ∧ <span>And</span>
+    </button>
+    <button class="btn-or" (click)="addOr()">
+      ∨ <span>Or</span>
+    </button>
+    <button class="btn-until" (click)="addUntil()">
+      𝒰 <span>Until</span>
+    </button>
+
     <button (click)="reset(currentVar())">
       {{ currentVar() }} <span>Prop</span>
     </button>
-    
+
     <button class="btn-full" (click)="reset('p')">
       RESET TO P
     </button>

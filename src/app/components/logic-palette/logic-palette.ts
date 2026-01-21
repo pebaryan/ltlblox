@@ -20,19 +20,45 @@ export class LogicPalette {
   addEventually() {
     this.wrapFormula('EVENTUALLY');
   }
+  addNext() {
+    this.wrapFormula('NEXT');
+  }
   addNot() {
     this.wrapFormula('NOT');
   }
   reset(v: string) {
     this.resetFormula(v);
   }
+  addOr() {
+    this.wrapBinary('OR');
+  }
+  addAnd() {
+    this.wrapBinary('AND');
+  }
+  addUntil() {
+    this.wrapBinary('UNTIL');
+  }
 
-  wrapFormula(type: 'ALWAYS' | 'EVENTUALLY' | 'NOT') {
+  wrapFormula(type: 'ALWAYS' | 'EVENTUALLY' | 'NOT' | 'NEXT') {
     const current = formulaState();
 
     formulaState.set({
       type: type,
-      children: [current], // The old formula becomes the child (the floor below)
+      children: [current],
+    });
+  }
+
+  wrapBinary(type: 'AND' | 'OR' | 'UNTIL') {
+    const current = formulaState();
+    const varName = prompt(`Enter variable for right-hand side of ${type}:`);
+    if (!varName || !varName.trim()) return;
+
+    formulaState.set({
+      type: type,
+      children: [
+        current,
+        { type: 'PROPOSITION', variableId: varName.trim() }
+      ],
     });
   }
 

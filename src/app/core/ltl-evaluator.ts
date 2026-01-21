@@ -40,6 +40,17 @@ export class LtlEvaluator {
           if (this.evaluate(node.children![0], trace, i)) return true;
         }
         return false;
+      case 'UNTIL':
+        const [p, q] = node.children!;
+        for (let i = t; i < trace.length; i++) {
+          if (this.evaluate(q, trace, i)) {
+            for (let j = t; j < i; j++) {
+              if (!this.evaluate(p, trace, j)) return false;
+            }
+            return true;
+          }
+        }
+        return false;
       default:
         return false;
     }

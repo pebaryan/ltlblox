@@ -1,0 +1,14 @@
+{
+  "defaultTrace": [
+    { "p": true, "q": false, "r": false },
+    { "p": false, "q": true, "r": false },
+    { "p": true, "q": true, "r": false },
+    { "p": false, "q": false, "r": true }
+  ],
+  "initialFormula": {
+    "type": "EVENTUALLY",
+    "children": [
+      { "type": "PROPOSITION", "variableId": "q" }
+    ]
+  }
+}

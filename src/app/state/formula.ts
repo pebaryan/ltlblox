@@ -27,8 +27,14 @@ export const currentFormulaString = computed(() => {
         return `□(${stringify(node.children![0])})`;
       case 'EVENTUALLY':
         return `◇(${stringify(node.children![0])})`;
+      case 'NEXT':
+        return `○(${stringify(node.children![0])})`;
       case 'AND':
         return `(${stringify(node.children![0])} ∧ ${stringify(node.children![1])})`;
+      case 'OR':
+        return `(${stringify(node.children![0])} ∨ ${stringify(node.children![1])})`;
+      case 'UNTIL':
+        return `(${stringify(node.children![0])} 𝒰 ${stringify(node.children![1])})`;
       case 'NOT':
         return `¬(${stringify(node.children![0])})`;
       default:
