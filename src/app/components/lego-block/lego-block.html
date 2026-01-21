@@ -9,4 +9,13 @@
           [emissiveIntensity]="isSatisfied ? 0.15 : 0"
         />
       </th-mesh>
+
+      <!-- Text label sprite -->
+      <th-sprite [position]="[0, 0, 0.5]" [scale]="[0.5, 0.25, 1]">
+        <th-spriteMaterial 
+          [map]="labelTexture"
+          [depthTest]="false"
+          [transparent]="true"
+        />
+      </th-sprite>
     </th-group>
