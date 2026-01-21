@@ -1,0 +1,49 @@
+<th-group>
+  <!-- Main horizontal rail - using scale instead of geometry args -->
+  <th-mesh [position]="[railCenter(), 0, 0]" [rotation]="[0, 0, 1.5708]" [scale]="[1, railLength(), 1]">
+    <th-cylinderGeometry [args]="[0.05, 0.05, 1, 16]" />
+    <th-meshStandardMaterial 
+      [color]="'#666666' | color" 
+      [roughness]="0.3"
+      [metalness]="0.5"
+    />
+  </th-mesh>
+
+  <!-- Time step markers -->
+  @for (step of traceState(); track $index) {
+    <!-- Time marker node -->
+    <th-mesh [position]="[$index, 0, 0]">
+      <th-sphereGeometry [args]="[0.12, 16, 16]" />
+      <th-meshStandardMaterial 
+        [color]="(currentTime() === $index ? '#ffaa44' : '#888888') | color"
+        [roughness]="0.3"
+        [metalness]="0.5"
+        [emissive]="(currentTime() === $index ? '#ffaa44' : '#000000') | color"
+        [emissiveIntensity]="currentTime() === $index ? 0.5 : 0"
+      />
+    </th-mesh>
+
+    <!-- Vertical post -->
+    <th-mesh [position]="[$index, 0.1, 0]">
+      <th-cylinderGeometry [args]="[0.02, 0.02, 0.2, 8]" />
+      <th-meshStandardMaterial 
+        [color]="'#555555' | color" 
+        [roughness]="0.5"
+      />
+    </th-mesh>
+  }
+
+  <!-- Current time indicator ring -->
+  @if (currentTime() < traceLength()) {
+    <th-mesh [position]="[currentTime(), 0.05, 0]">
+      <th-torusGeometry [args]="[0.18, 0.03, 8, 24]" />
+      <th-meshStandardMaterial 
+        [color]="'#ffaa44' | color"
+        [roughness]="0.2"
+        [metalness]="0.8"
+        [emissive]="'#ffaa44' | color"
+        [emissiveIntensity]="0.3"
+      />
+    </th-mesh>
+  }
+</th-group>

@@ -4,13 +4,14 @@ import { formulaState, currentTime } from '../../state/formula';
 import { LtlEvaluator, LTLNode } from '../../core/ltl-evaluator';
 import { LegoBlock } from '../lego-block/lego-block';
 import { LogicLink } from '../logic-link/logic-link';
+import { TimelineRail } from '../timeline-rail/timeline-rail';
 import { flattenFormula } from '../../core/formula-utils';
 import { traceState } from '../../state/trace';
 
 @Component({
   selector: 'app-scene-orchestrator',
   standalone: true,
-  imports: [NgxThreeModule, LegoBlock, LogicLink],
+  imports: [NgxThreeModule, LegoBlock, LogicLink, TimelineRail],
   templateUrl: './scene-orchestrator.html',
   styleUrl: './scene-orchestrator.scss',
 })

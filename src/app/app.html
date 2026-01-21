@@ -5,7 +5,7 @@
     <th-scene [background]="'#111' | color">
       <app-scene-orchestrator />
 
-      <th-orbitControls #orbitControls/>
+      <th-orbitControls [enableDamping]="true" />
 
       <th-ambientLight [intensity]="0.8" />
       <th-pointLight [position]="[10, 10, 10]" />

@@ -1,5 +1,7 @@
-<th-ambientLight [intensity]="0.8" />
-<th-pointLight [position]="[5, 10, 5]" [intensity]="1" />
+<th-ambientLight [intensity]="0.2" />
+<th-pointLight [position]="[2, 4, 3]" [intensity]="30" [distance]="15" />
+<th-pointLight [position]="[-2, 5, 2]" [intensity]="20" [distance]="15" />
+<th-pointLight [position]="[0, 3, 4]" [intensity]="15" [distance]="15" />
 
 <th-gridHelper
   [args]="[100, 100, '#222', '#222']"
@@ -7,6 +9,8 @@
   [rotation]="[0, 0, 0]"
 >
 </th-gridHelper>
+
+<app-timeline-rail />
 
 @for (block of flatFormula(); track $index) {
 <app-lego-block
