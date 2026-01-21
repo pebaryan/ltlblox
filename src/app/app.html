@@ -1,6 +1,6 @@
 <div class="canvas-container" style="width: 100vw; height: 100vh">
   <th-canvas>
-    <th-perspectiveCamera [args]="[75, 2, 0.1, 1000]" [position]="[5, 5, 10]" #cam />
+    <th-perspectiveCamera [args]="[75, 2, 0.1, 1000]" [position]="[-5, 1, 0]" #cam />
 
     <th-scene [background]="'#111' | color">
       <app-scene-orchestrator />
@@ -8,7 +8,7 @@
       <th-orbitControls [enableDamping]="true" />
 
       <th-ambientLight [intensity]="0.8" />
-      <th-pointLight [position]="[10, 10, 10]" />
+      <th-pointLight [position]="[0, 10, 0]" />
     </th-scene>
   </th-canvas>
 

@@ -1,10 +1,12 @@
 <th-group [position]="pos">
   <!-- Box shape (PROPOSITION) -->
   @if (shape === 'box') {
-    <th-mesh>
-      <th-boxGeometry [args]="[0.8, 0.6, 0.8]" />
-      <th-meshStandardMaterial 
-        [color]="_color() | color" 
+    @let centerZ = 0;
+    <!-- @let centerZ = blockWidth; -->
+    <th-mesh [position]="[0, 0, centerZ]">
+      <th-boxGeometry [args]="[blockWidth, blockHeight, blockWidth]" />
+      <th-meshStandardMaterial
+        [color]="_color() | color"
         [roughness]="0.05"
         [metalness]="0.1"
         [emissive]="'#ffaa44' | color"
@@ -13,125 +15,113 @@
     </th-mesh>
 
     <!-- Text label sprite -->
-    <th-sprite [position]="[0, 0, 0.41]" [scale]="[0.4, 0.2, 1]">
-      <th-spriteMaterial 
-        [map]="labelTexture"
-        [depthTest]="false"
-        [transparent]="true"
-      />
+    <th-sprite
+      [position]="[-blockWidth / 2 - 0.01, 0, centerZ]"
+      [scale]="[blockWidth * 0.5, blockHeight * 0.5, 1]"
+    >
+      <th-spriteMaterial [map]="labelTexture" [depthTest]="false" [transparent]="true" />
     </th-sprite>
   }
 
   <!-- Unary operator bracket (□, ◇, ○, ¬) -->
   @if (shape === 'unary') {
-    @let childCenter = childZ && childZ.length > 0 ? childZ[0] : 0;
-    @let childW = childWidth || 0.8;
+    @let centerZ = -width / 2 + blockWidth / 2;
+    @let childW = width - blockWidth * 2;
     @let halfWidth = childW / 2;
-    @let leftLegX = childCenter - halfWidth - 0.4;
-    @let rightLegX = childCenter + halfWidth + 0.4;
-    <th-group [rotation]="[0, 1.5708, 0]">
-      <!-- Top bar spanning children -->
-      <th-mesh [position]="[childCenter, 0, 0]">
-        <th-boxGeometry [args]="[childW + 0.8, 0.4, 0.8]" />
-        <th-meshStandardMaterial 
-          [color]="_color() | color" 
-          [roughness]="0.05"
-          [metalness]="0.1"
-          [emissive]="'#ffaa44' | color"
-          [emissiveIntensity]="isSatisfied ? 0.15 : 0"
-        />
-      </th-mesh>
+    @let leftLegZ = centerZ - halfWidth - blockWidth / 2;
+    @let rightLegZ = centerZ + halfWidth + blockWidth / 2;
+    @let span = rightLegZ - leftLegZ + blockWidth;
+    <!-- Top bar spanning children -->
+    <th-mesh [position]="[0, 0, centerZ]">
+      <th-boxGeometry [args]="[blockWidth, blockHeight, span]" />
+      <th-meshStandardMaterial
+        [color]="_color() | color"
+        [roughness]="0.05"
+        [metalness]="0.1"
+        [emissive]="'#ffaa44' | color"
+        [emissiveIntensity]="isSatisfied ? 0.15 : 0"
+      />
+    </th-mesh>
 
-      <!-- Left leg connecting to child -->
-      <th-mesh [position]="[leftLegX, -0.5, 0]">
-        <th-boxGeometry [args]="[0.8, 1.05, 0.8]" />
-        <th-meshStandardMaterial 
-          [color]="_color() | color" 
-          [roughness]="0.05"
-          [metalness]="0.1"
-          [emissive]="'#ffaa44' | color"
-          [emissiveIntensity]="isSatisfied ? 0.15 : 0"
-        />
-      </th-mesh>
+    <!-- Left leg connecting to child -->
+    <th-mesh [position]="[0, -blockHeight * 0.5, leftLegZ]">
+      <th-boxGeometry [args]="[blockWidth, 2 * blockHeight, blockWidth]" />
+      <th-meshStandardMaterial
+        [color]="_color() | color"
+        [roughness]="0.05"
+        [metalness]="0.1"
+        [emissive]="'#ffaa44' | color"
+        [emissiveIntensity]="isSatisfied ? 0.15 : 0"
+      />
+    </th-mesh>
 
-      <!-- Right leg connecting to child -->
-      <th-mesh [position]="[rightLegX, -0.5, 0]">
-        <th-boxGeometry [args]="[0.8, 1.05, 0.8]" />
-        <th-meshStandardMaterial 
-          [color]="_color() | color" 
-          [roughness]="0.05"
-          [metalness]="0.1"
-          [emissive]="'#ffaa44' | color"
-          [emissiveIntensity]="isSatisfied ? 0.15 : 0"
-        />
-      </th-mesh>
+    <!-- Right leg connecting to child -->
+    <th-mesh [position]="[0, -blockHeight * 0.5, rightLegZ]">
+      <th-boxGeometry [args]="[blockWidth, 2 * blockHeight, blockWidth]" />
+      <th-meshStandardMaterial
+        [color]="_color() | color"
+        [roughness]="0.05"
+        [metalness]="0.1"
+        [emissive]="'#ffaa44' | color"
+        [emissiveIntensity]="isSatisfied ? 0.15 : 0"
+      />
+    </th-mesh>
 
-       <!-- Unary operator label -->
-      <th-sprite [position]="[childCenter, 0, 0.41]" [scale]="[0.3, 0.2, 1]">
-        <th-spriteMaterial 
-          [map]="labelTexture"
-          [depthTest]="false"
-          [transparent]="true"
-        />
-      </th-sprite>
-    </th-group>
+    <!-- Unary operator label -->
+    <th-sprite [position]="[-blockWidth / 2 - 0.01, 0, centerZ]" [scale]="[0.3, 0.2, 1]">
+      <th-spriteMaterial [map]="labelTexture" [depthTest]="false" [transparent]="true" />
+    </th-sprite>
+    <!-- </th-group> -->
   }
 
   <!-- Binary operator bracket (∧, ∨, 𝒰) -->
   @if (shape === 'binary') {
-    @let leftZ = childZ && childZ.length > 0 ? childZ[0] : -0.6;
-    @let rightZ = childZ && childZ.length > 1 ? childZ[1] : 0.6;
-    @let minZ = leftZ;
-    @let maxZ = rightZ;
-    @let span = maxZ - minZ;
-    @let centerZ = (minZ + maxZ) / 2;
-    @let leftLegX = leftZ - 0.4;
-    @let rightLegX = rightZ + 0.4;
-    <th-group [rotation]="[0, 1.5708, 0]">
-      <!-- Top bar spanning both children -->
-      <th-mesh [position]="[centerZ, 0, 0]">
-        <th-boxGeometry [args]="[span + 0.8, 0.4, 0.8]" />
-        <th-meshStandardMaterial 
-          [color]="_color() | color" 
-          [roughness]="0.05"
-          [metalness]="0.1"
-          [emissive]="'#ffaa44' | color"
-          [emissiveIntensity]="isSatisfied ? 0.15 : 0"
-        />
-      </th-mesh>
+    @let centerZ = -width / 2 + blockWidth / 2;
+    @let childW = width - blockWidth * 2;
+    @let halfWidth = childW / 2;
+    @let leftLegZ = centerZ - halfWidth - blockWidth / 2;
+    @let rightLegZ = centerZ + halfWidth + blockWidth / 2;
+    @let span = rightLegZ - leftLegZ;
 
-      <!-- Left leg connecting to left child -->
-      <th-mesh [position]="[leftLegX, -0.5, 0]">
-        <th-boxGeometry [args]="[0.8, 1.05, 0.8]" />
-        <th-meshStandardMaterial 
-          [color]="_color() | color" 
-          [roughness]="0.05"
-          [metalness]="0.1"
-          [emissive]="'#ffaa44' | color"
-          [emissiveIntensity]="isSatisfied ? 0.15 : 0"
-        />
-      </th-mesh>
+    <th-mesh [position]="[0, 0, centerZ]">
+      <th-boxGeometry [args]="[blockWidth, blockHeight, span]" />
+      <th-meshStandardMaterial
+        [color]="_color() | color"
+        [roughness]="0.05"
+        [metalness]="0.1"
+        [emissive]="'#ffaa44' | color"
+        [emissiveIntensity]="isSatisfied ? 0.15 : 0"
+      />
+    </th-mesh>
 
-      <!-- Right leg connecting to right child -->
-      <th-mesh [position]="[rightLegX, -0.5, 0]">
-        <th-boxGeometry [args]="[0.8, 1.05, 0.8]" />
-        <th-meshStandardMaterial 
-          [color]="_color() | color" 
-          [roughness]="0.05"
-          [metalness]="0.1"
-          [emissive]="'#ffaa44' | color"
-          [emissiveIntensity]="isSatisfied ? 0.15 : 0"
-        />
-      </th-mesh>
+    <!-- Left leg connecting to left child -->
+    <th-mesh [position]="[0, -blockHeight * 0.5, leftLegZ]">
+      <th-boxGeometry [args]="[blockWidth, 2 * blockHeight, blockWidth]" />
+      <th-meshStandardMaterial
+        [color]="_color() | color"
+        [roughness]="0.05"
+        [metalness]="0.1"
+        [emissive]="'#ffaa44' | color"
+        [emissiveIntensity]="isSatisfied ? 0.15 : 0"
+      />
+    </th-mesh>
 
-      <!-- Binary operator label -->
-      <th-sprite [position]="[centerZ, 0, 0.41]" [scale]="[0.3, 0.2, 1]">
-        <th-spriteMaterial 
-          [map]="labelTexture"
-          [depthTest]="false"
-          [transparent]="true"
-        />
-      </th-sprite>
-    </th-group>
+    <!-- Right leg connecting to right child -->
+    <th-mesh [position]="[0, -blockHeight * 0.5, rightLegZ]">
+      <th-boxGeometry [args]="[blockWidth, 2 * blockHeight, blockWidth]" />
+      <th-meshStandardMaterial
+        [color]="_color() | color"
+        [roughness]="0.05"
+        [metalness]="0.1"
+        [emissive]="'#ffaa44' | color"
+        [emissiveIntensity]="isSatisfied ? 0.15 : 0"
+      />
+    </th-mesh>
+
+    <!-- Binary operator label -->
+    <th-sprite [position]="[-blockWidth / 2 - 0.01, 0, centerZ]" [scale]="[0.3, 0.2, 1]">
+      <th-spriteMaterial [map]="labelTexture" [depthTest]="false" [transparent]="true" />
+    </th-sprite>
+    <!-- </th-group> -->
   }
 </th-group>

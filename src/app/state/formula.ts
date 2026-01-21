@@ -11,8 +11,11 @@ const initialTrace: Trace = [
 ];
 
 const initialFormula: LTLNode = {
-  type: 'EVENTUALLY',
-  children: [{ type: 'PROPOSITION', variableId: 'q' }],
+  type: 'AND',
+  children: [
+    { type: 'PROPOSITION', variableId: 'p' },
+    { type: 'PROPOSITION', variableId: 'q' },
+  ],
 };
 
 // src/app/core/formula.store.ts
@@ -119,10 +122,7 @@ export function addBinaryToProposition(type: 'AND' | 'OR' | 'UNTIL') {
         selectedPropositionIndex.set(currentIndex + 1);
         return {
           type,
-          children: [
-            { ...node },
-            { type: 'PROPOSITION', variableId: varName }
-          ]
+          children: [{ ...node }, { type: 'PROPOSITION', variableId: varName }],
         };
       }
       currentIndex++;
@@ -145,10 +145,7 @@ export function wrapFormulaWithBinary(type: 'AND' | 'OR' | 'UNTIL') {
 
   formulaState.set({
     type,
-    children: [
-      current,
-      { type: 'PROPOSITION', variableId: varName }
-    ],
+    children: [current, { type: 'PROPOSITION', variableId: varName }],
   });
 
   selectedPropositionIndex.set(oldCount);

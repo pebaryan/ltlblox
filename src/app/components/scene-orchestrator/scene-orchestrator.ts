@@ -5,7 +5,7 @@ import { LtlEvaluator, LTLNode } from '../../core/ltl-evaluator';
 import { LegoBlock } from '../lego-block/lego-block';
 import { LogicLink } from '../logic-link/logic-link';
 import { TimelineRail } from '../timeline-rail/timeline-rail';
-import { flattenFormula, calculateBlockWidths, FlatBlock } from '../../core/formula-utils';
+import { flattenFormula, calculateBlockWidths, FlatBlock, blockHeight } from '../../core/formula-utils';
 import { traceState } from '../../state/trace';
 
 @Component({
@@ -21,9 +21,12 @@ export class SceneOrchestrator {
 
   flatFormula = computed(() => {
     const root = formulaState();
+    console.log('Current formula root:', root);
     const depth = this.getTreeDepth(root);
-    const startY = (depth - 1) * 1.2;
+    const startY = depth * blockHeight;
+    console.log('Tree depth:', depth, 'Start Y:', startY);
     const blocks = flattenFormula(root, currentTime(), startY, 0);
+    console.log('Flattened blocks:', blocks);
     return calculateBlockWidths(blocks);
   });
 

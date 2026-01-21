@@ -1,4 +1,4 @@
-import { LTLNode } from "./ltl-evaluator";
+import { LTLNode } from './ltl-evaluator';
 
 export interface FlatBlock {
   node: LTLNode;
@@ -10,27 +10,31 @@ export interface FlatBlock {
   childWidth?: number;
 }
 
+export const blockHeight = 0.6;
+export const propositionWidth = 0.8;
+export const operatorExtendedWidth = 2 * propositionWidth;
+
 export function flattenFormula(
-  node: LTLNode, 
-  x: number, 
-  y: number, 
+  node: LTLNode,
+  x: number,
+  y: number,
   z: number,
   list: FlatBlock[] = [],
-  parentIndex: number | null = null
+  parentIndex: number | null = null,
 ): FlatBlock[] {
   const isUnary = ['ALWAYS', 'EVENTUALLY', 'NEXT', 'NOT'].includes(node.type);
   const isBinary = ['AND', 'OR', 'UNTIL'].includes(node.type);
   const isProposition = node.type === 'PROPOSITION';
 
   let shape: 'box' | 'unary' | 'binary' = 'box';
-  let width = 0.8;
+  let width = propositionWidth;
 
   if (isProposition) {
     shape = 'box';
-    width = 0.8;
+    width = propositionWidth;
   } else if (isUnary || isBinary) {
-    shape = node.type === 'PROPOSITION' ? 'box' : (isUnary ? 'unary' : 'binary');
-    width = 1.3;
+    shape = node.type === 'PROPOSITION' ? 'box' : isUnary ? 'unary' : 'binary';
+    width = operatorExtendedWidth; // base width for operators
   }
 
   const currentIndex = list.length;
@@ -39,7 +43,7 @@ export function flattenFormula(
     position: [x, y, z],
     shape,
     width,
-    children: []
+    children: [],
   });
 
   if (parentIndex !== null) {
@@ -47,49 +51,51 @@ export function flattenFormula(
   }
 
   if (node.children && node.children.length > 0) {
-    const childY = y - 1.2;
-    
+    const childY = y - blockHeight;
+
     if (isBinary && node.children.length === 2) {
-      const leftZ = z - 0.6;
-      const rightZ = z + 0.6;
-      flattenFormula(node.children[0], x, childY, leftZ, list, currentIndex);
-      flattenFormula(node.children[1], x, childY, rightZ, list, currentIndex);
+      const leftZ = z - 0.5 * width;
+      const rightZ = z + 0.5 * width;
+      flattenFormula(node.children[0], x, childY, z, list, currentIndex);
+      flattenFormula(node.children[1], x, childY, z, list, currentIndex);
     } else if (isUnary && node.children.length === 1) {
       flattenFormula(node.children[0], x, childY, z, list, currentIndex);
     } else {
       node.children.forEach((child, index) => {
-        const offsetZ = (index - (node.children!.length - 1) / 2) * 0.8;
+        const offsetZ = (index - (node.children!.length - 1) / 2) * propositionWidth;
         flattenFormula(child, x, childY, z + offsetZ, list, currentIndex);
       });
     }
   }
-
   return list;
 }
 
 export function calculateBlockWidths(blocks: FlatBlock[]): FlatBlock[] {
-  const propositionWidth = 0.8;
-  const unaryWidth = 0.8;
-  const binaryWidth = 1.6;
-
   const processed = new Set<number>();
+  let startZ: number = 0;
 
   function processBlock(index: number): number {
     if (processed.has(index)) return 0;
     processed.add(index);
 
     const block = blocks[index];
-    
+
+
     if (block.shape === 'box') {
       block.width = propositionWidth;
+      startZ += propositionWidth; // spacing between blocks
+      block.position[2] = startZ;
       return propositionWidth;
     }
 
     if (block.shape === 'unary' || block.shape === 'binary') {
       const childWidths: number[] = [];
       const childZPositions: number[] = [];
-      
-      block.children.forEach(childIndex => {
+
+      startZ += propositionWidth; // spacing between children
+      block.position[2] = startZ;
+
+      block.children.forEach((childIndex) => {
         const childWidth = processBlock(childIndex);
         childWidths.push(blocks[childIndex].width);
         childZPositions.push(blocks[childIndex].position[2]);
@@ -99,10 +105,12 @@ export function calculateBlockWidths(blocks: FlatBlock[]): FlatBlock[] {
       block.childZ = childZPositions;
 
       if (block.shape === 'unary') {
-        block.width = unaryWidth;
+        block.width = childWidths[0] + operatorExtendedWidth;
       } else {
-        block.width = binaryWidth;
+        block.width = operatorExtendedWidth + (childWidths[0] + childWidths[1]);
       }
+      startZ += propositionWidth; // spacing between children
+      block.position[2] = startZ;
       return block.width;
     }
 
@@ -114,7 +122,12 @@ export function calculateBlockWidths(blocks: FlatBlock[]): FlatBlock[] {
       processBlock(index);
     }
   });
+  console.log('Total width needed:', startZ);
+  blocks.forEach((_, index) => {
+    blocks[index].position[2] -= (startZ / 2);
+  });
 
+  console.log(blocks)
   return blocks;
 }
 
@@ -126,7 +139,7 @@ export function getTreeDepth(node: LTLNode): number {
 export function getNodeCount(node: LTLNode): number {
   let count = 1;
   if (node.children) {
-    node.children.forEach(child => {
+    node.children.forEach((child) => {
       count += getNodeCount(child);
     });
   }

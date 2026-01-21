@@ -1,6 +1,7 @@
 import { Component, Input, computed, OnChanges, SimpleChanges } from '@angular/core';
 import { NgxThreeModule } from 'ngx-three';
 import * as THREE from 'three';
+import { propositionWidth, blockHeight } from '../../core/formula-utils';
 
 function createTextTexture(text: string): THREE.Texture {
   const canvas = document.createElement('canvas');
@@ -43,6 +44,8 @@ export class LegoBlock implements OnChanges {
   @Input() childWidth?: number;
 
   labelTexture = new THREE.Texture();
+  readonly blockHeight = blockHeight;
+  readonly blockWidth = propositionWidth;
 
   constructor() {
     this.updateLabelTexture();
