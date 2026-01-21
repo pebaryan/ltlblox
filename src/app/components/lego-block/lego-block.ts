@@ -5,15 +5,15 @@ import * as THREE from 'three';
 function createTextTexture(text: string): THREE.Texture {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
-  const fontSize = 64;
+  const fontSize = 48;
   const font = `bold ${fontSize}px Arial`;
   
   ctx!.font = font;
   const metrics = ctx!.measureText(text);
   const textWidth = metrics.width;
   
-  canvas.width = textWidth + 20;
-  canvas.height = fontSize + 20;
+  canvas.width = textWidth + 16;
+  canvas.height = fontSize + 16;
   
   ctx!.font = font;
   ctx!.fillStyle = 'white';
@@ -37,6 +37,10 @@ export class LegoBlock implements OnChanges {
   @Input() type: string = 'PROPOSITION';
   @Input() variableId?: string;
   @Input() isSatisfied: boolean = false;
+  @Input() shape: 'box' | 'unary' | 'binary' = 'box';
+  @Input() width: number = 1.3;
+  @Input() childZ?: number[];
+  @Input() childWidth?: number;
 
   labelTexture = new THREE.Texture();
 
