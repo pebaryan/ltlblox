@@ -1,7 +1,7 @@
 .trace-container {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  top: 20px;
+  left: 20px;
 
   background: rgba(25, 25, 25, 0.85);
   backdrop-filter: blur(10px);
@@ -10,7 +10,7 @@
   padding: 1.5rem;
   color: #eee;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  z-index: 100; // Ensure it stays above the 3D canvas
+  z-index: 100;
   font-family: 'Segoe UI', system-ui, sans-serif;
 
   h3 {

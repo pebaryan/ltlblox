@@ -1,5 +1,5 @@
 import { Component, computed } from '@angular/core';
-import { formulaState, currentFormulaString, updateProposition, selectedPropositionIndex, getPropositionCount } from '../../state/formula';
+import { formulaState, currentFormulaString, updateProposition, selectedPropositionIndex, getPropositionCount, getPropositionAtIndex, wrapWholeFormula, addBinaryToProposition, wrapFormulaWithBinary, getHighlightedFormula, removeProposition } from '../../state/formula';
 import { LTLNode } from '../../core/ltl-evaluator';
 import { traceVariables } from '../../state/trace';
 
@@ -49,17 +49,12 @@ export class LogicPalette {
   }
 
   wrapBinary(type: 'AND' | 'OR' | 'UNTIL') {
-    const current = formulaState();
-    const varName = prompt(`Enter variable for right-hand side of ${type}:`);
-    if (!varName || !varName.trim()) return;
-
-    formulaState.set({
-      type: type,
-      children: [
-        current,
-        { type: 'PROPOSITION', variableId: varName.trim() }
-      ],
-    });
+    if (wrapWholeFormula()) {
+      wrapFormulaWithBinary(type);
+      wrapWholeFormula.set(false);
+    } else {
+      addBinaryToProposition(type);
+    }
   }
 
   resetFormula(varId: string) {
@@ -79,11 +74,18 @@ export class LogicPalette {
     return findVar(formulaState());
   });
 
+  public highlightedFormula = computed(() => getHighlightedFormula());
+
   public propositionCount = computed(() => getPropositionCount());
   public propositionIndices = computed(() => 
     Array.from({ length: this.propositionCount() }, (_, i) => i)
   );
   public selectedIndex = selectedPropositionIndex;
+  public wrapWholeFormula = wrapWholeFormula;
+
+  toggleWrapMode() {
+    wrapWholeFormula.update(v => !v);
+  }
 
   selectProposition(index: number | null) {
     selectedPropositionIndex.set(index);
@@ -96,5 +98,9 @@ export class LogicPalette {
     } else {
       updateProposition(v, 0);
     }
+  }
+
+  removeProp(index: number) {
+    removeProposition(index);
   }
 }

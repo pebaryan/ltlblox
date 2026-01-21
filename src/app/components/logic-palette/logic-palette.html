@@ -2,18 +2,21 @@
   <h3>LTL Constructor</h3>
   
   <div class="formula-code">
-    <code>{{ formulaDisplay() }}</code>
+    <code [innerHTML]="highlightedFormula()"></code>
   </div>
 
   <div class="variable-selector">
     <span>Edit Proposition:</span>
     <div class="prop-selector">
       @for (prop of propositionIndices(); track $index) {
-        <button 
-          [class.selected]="selectedIndex() === $index"
-          (click)="selectProposition($index)">
-          P{{ $index }}
-        </button>
+        <div class="prop-item">
+          <button 
+            [class.selected]="selectedIndex() === $index"
+            (click)="selectProposition($index)">
+            P{{ $index }}
+          </button>
+          <button class="remove-prop-btn" (click)="removeProp($index)">×</button>
+        </div>
       }
     </div>
     <span>Set Value:</span>
@@ -28,6 +31,15 @@
         <em style="font-size: 0.7rem; color: #666;">No variables in trace</em>
       }
     </div>
+  </div>
+
+  <div class="wrap-toggle">
+    <button 
+      [class.active]="wrapWholeFormula()"
+      (click)="toggleWrapMode()">
+      <span class="toggle-indicator"></span>
+      Wrap: {{ wrapWholeFormula() ? 'Whole Formula' : 'Focused Prop' }}
+    </button>
   </div>
 
   <div class="button-grid">
