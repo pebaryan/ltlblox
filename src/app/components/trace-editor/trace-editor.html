@@ -17,7 +17,8 @@
         </div>
         @for (step of traceState(); track $index) {
           <div 
-            class="cell" 
+            class="cell"
+            [class.active]="currentTime() === $index"
             [class.true]="step[varName]"
             (click)="toggleStep($index, varName)">
             <div class="led"></div>

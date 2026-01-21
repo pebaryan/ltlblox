@@ -136,8 +136,14 @@ button {
     }
 
     &.true .led {
-      background: #3b82f6; // Blue LED for True
+      background: #3b82f6;
       box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+    }
+
+    &.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-left-color: #3b82f6;
+      border-right-color: #3b82f6;
     }
   }
 }
