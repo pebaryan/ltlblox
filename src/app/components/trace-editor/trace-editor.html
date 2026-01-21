@@ -1,4 +1,12 @@
 <div class="trace-editor trace-container">
+  <div class="trace-header">
+    <h3>Trace</h3>
+    <div class="time-controls">
+      <button class="time-btn" (click)="removeTime()">-</button>
+      <span class="time-count">{{ traceState().length }}</span>
+      <button class="time-btn" (click)="addTime()">+</button>
+    </div>
+  </div>
   <div class="timeline-grid">
     <div class="row header">
       <div class="label">Var / Time</div>

@@ -1,4 +1,5 @@
 import { computed, signal } from '@angular/core';
+import { traceVariables } from './trace';
 import { LTLNode, Trace } from '../core/ltl-evaluator';
 
 // Let's create a classic LTL scenario: "Eventually q happens"
@@ -278,6 +279,58 @@ export function removeProposition(targetIndex: number) {
     selectedPropositionIndex.set(Math.min(targetIndex, newCount - 1));
   } else {
     formulaState.set({ type: 'PROPOSITION', variableId: 'p', children: [] });
+    selectedPropositionIndex.set(0);
+  }
+}
+
+export function removePropositionsByVarName(varName: string) {
+  let removed = false;
+
+  const updateNode = (node: LTLNode): LTLNode | null => {
+    if (node.type === 'PROPOSITION') {
+      if (node.variableId === varName) {
+        removed = true;
+        return null;
+      }
+      return node;
+    }
+
+    if (node.children && node.children.length > 0) {
+      const newChildren = node.children
+        .map((c) => updateNode(c))
+        .filter((c): c is LTLNode => c !== null);
+
+      if (newChildren.length === 0) {
+        return null;
+      }
+
+      if (newChildren.length === 1 && ['ALWAYS', 'EVENTUALLY', 'NEXT', 'NOT'].includes(node.type)) {
+        return { ...node, children: newChildren };
+      }
+
+      if (newChildren.length === 1) {
+        return newChildren[0];
+      }
+
+      return { ...node, children: newChildren };
+    }
+
+    return node;
+  };
+
+  const root = formulaState();
+  const result = updateNode(root);
+
+  const vars = traceVariables();
+  const firstVar = vars.length > 0 ? vars[0] : 'p';
+
+  if (result) {
+    formulaState.set(result);
+  } else {
+    formulaState.set({ type: 'PROPOSITION', variableId: firstVar, children: [] });
+  }
+
+  if (removed) {
     selectedPropositionIndex.set(0);
   }
 }

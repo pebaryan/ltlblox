@@ -1,4 +1,5 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, signal, effect } from '@angular/core';
+import { UpperCasePipe } from '@angular/common';
 import { formulaState, currentFormulaString, updateProposition, selectedPropositionIndex, getPropositionCount, getPropositionAtIndex, wrapWholeFormula, addBinaryToProposition, wrapFormulaWithBinary, getHighlightedFormula, removeProposition } from '../../state/formula';
 import { LTLNode } from '../../core/ltl-evaluator';
 import { traceVariables } from '../../state/trace';
@@ -6,13 +7,23 @@ import { traceVariables } from '../../state/trace';
 @Component({
   selector: 'app-logic-palette',
   standalone: true,
-  imports: [],
+  imports: [UpperCasePipe],
   templateUrl: './logic-palette.html',
   styleUrl: './logic-palette.scss',
 })
 export class LogicPalette {
   public availableVars = traceVariables;
   public formulaDisplay = currentFormulaString;
+  public firstVar = signal('p');
+
+  constructor() {
+    effect(() => {
+      const vars = this.availableVars();
+      if (vars.length > 0) {
+        this.firstVar.set(vars[0]);
+      }
+    });
+  }
 
   addAlways() {
     this.wrapFormula('ALWAYS');

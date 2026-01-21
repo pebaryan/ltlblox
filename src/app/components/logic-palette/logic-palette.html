@@ -70,8 +70,8 @@
       {{ currentVar() }} <span>Prop</span>
     </button>
 
-    <button class="btn-full" (click)="reset('p')">
-      RESET TO P
+    <button class="btn-full" (click)="reset(firstVar())">
+      RESET TO {{ firstVar() | uppercase }}
     </button>
   </div>
 </div>

@@ -1,6 +1,6 @@
 import { Component, computed } from '@angular/core';
 import { currentTime } from '../../state/formula';
-import { removeVariable, traceState, traceVariables } from '../../state/trace';
+import { removeVariable, traceState, traceVariables, addTimeStep, removeTimeStep } from '../../state/trace';
 
 @Component({
   selector: 'app-trace-editor',
@@ -16,7 +16,6 @@ export class TraceEditor {
   trace = traceState;
   time = currentTime;
 
-  // Get variable names (p, q, etc.) from the first step of the trace
   variables = computed(() => Object.keys(this.trace()[0] || {}));
 
   toggleValue(timeIndex: number, varName: string) {
@@ -32,7 +31,6 @@ export class TraceEditor {
 
   toggleStep(timeIndex: number, varName: string) {
     const currentState = [...traceState()];
-    // Toggle the boolean value for that specific variable at that specific time
     currentState[timeIndex] = {
       ...currentState[timeIndex],
       [varName]: !currentState[timeIndex][varName],
@@ -53,9 +51,17 @@ export class TraceEditor {
       traceState.update((current) =>
         current.map((step) => ({
           ...step,
-          [name.trim()]: false, // Add the new key to every step in the array
+          [name.trim()]: false,
         }))
       );
     }
+  }
+
+  addTime() {
+    addTimeStep();
+  }
+
+  removeTime() {
+    removeTimeStep();
   }
 }
