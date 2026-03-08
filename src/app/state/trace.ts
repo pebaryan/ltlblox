@@ -1,7 +1,9 @@
 import { signal, computed } from '@angular/core';
 import { formulaState, removePropositionsByVarName } from './formula';
 
-export type TraceStep = Record<string, boolean>;
+export interface TraceStep {
+  [key: string]: boolean;
+}
 
 export const traceState = signal<TraceStep[]>([
   { p: true, q: false, r: false },

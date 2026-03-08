@@ -1,19 +1,30 @@
-<div class="playback-container">
-  <button class="control-btn" (click)="stepBack()" [disabled]="currentTime() <= 0">
-    «
+<div class="playback-container" role="region" aria-label="Playback Controls">
+  <button 
+    class="control-btn" 
+    (click)="stepBack()" 
+    [disabled]="currentTime() <= 0"
+    [attr.aria-label]="'Go to previous time step, current is ' + currentTime()">
+    <span aria-hidden="true">«</span>
   </button>
 
-  <button class="control-btn" (click)="togglePlay()">
-    {{ isPlaying() ? '⏸' : '▶' }}
+  <button 
+    class="control-btn" 
+    (click)="togglePlay()"
+    [attr.aria-label]="isPlaying() ? 'Pause playback' : 'Start playback'">
+    <span aria-hidden="true">{{ isPlaying() ? '⏸' : '▶' }}</span>
   </button>
 
-  <button class="control-btn" (click)="stepForward()" [disabled]="currentTime() >= traceLength() - 1">
-    »
+  <button 
+    class="control-btn" 
+    (click)="stepForward()" 
+    [disabled]="currentTime() >= traceLength() - 1"
+    [attr.aria-label]="'Go to next time step, current is ' + currentTime()">
+    <span aria-hidden="true">»</span>
   </button>
 
   <div class="timeline-info">
     <span class="step-label">Time Step</span>
-    <span class="step-value">{{ currentTime() }}</span>
+    <span class="step-value" aria-live="polite">{{ currentTime() }}</span>
   </div>
 
   <div class="slider-wrapper">
@@ -22,7 +33,20 @@
       [min]="0" 
       [max]="traceLength() - 1" 
       [value]="currentTime()"
+      [attr.aria-label]="'Current time step, maximum is ' + (traceLength() - 1)"
       (input)="onSliderChange($event)"
+      role="slider"
+      aria-valuemin="0"
+      aria-valuemax="{{ traceLength() - 1 }}"
+      aria-valuenow="{{ currentTime() }}"
+      aria-valuetext="Time step {{ currentTime() }}"
     />
+  </div>
+
+  <div class="keyboard-hint">
+    <span class="hint-icon" aria-hidden="true">⌨️</span>
+    <span class="hint-text">
+      <kbd>←</kbd> <kbd>→</kbd> Navigate | <kbd>Space</kbd> Play/Pause
+    </span>
   </div>
 </div>

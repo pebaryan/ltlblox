@@ -1,6 +1,7 @@
 import { computed, signal } from '@angular/core';
 import { traceVariables } from './trace';
 import { LTLNode, Trace } from '../core/ltl-evaluator';
+import { getPropositionCount as countProps, getPropositionAtIndex as getPropAtIndex, updatePropositionAtNode, findPathToProposition } from './formula-traversal';
 
 // Let's create a classic LTL scenario: "Eventually q happens"
 const initialTrace: Trace = [
@@ -63,51 +64,16 @@ export function updateProposition(newVar: string, targetIndex?: number) {
 
   if (target === null) return;
 
-  let currentIndex = 0;
-  const updateNode = (node: LTLNode): LTLNode => {
-    if (node.type === 'PROPOSITION') {
-      if (currentIndex === target) {
-        currentIndex++;
-        return { ...node, variableId: newVar };
-      }
-      currentIndex++;
-      return node;
-    }
-    if (node.children && node.children.length > 0) {
-      return { ...node, children: node.children.map((c) => updateNode(c)) };
-    }
-    return node;
-  };
-
-  formulaState.set(updateNode(root));
+  const updated = updatePropositionAtNode(root, newVar, target);
+  formulaState.set(updated);
 }
 
 export function getPropositionCount(): number {
-  let count = 0;
-  const countNode = (node: LTLNode) => {
-    if (node.type === 'PROPOSITION') count++;
-    if (node.children) node.children.forEach(countNode);
-  };
-  countNode(formulaState());
-  return count;
+  return countProps(formulaState());
 }
 
 export function getPropositionAtIndex(index: number): string {
-  let currentIndex = 0;
-  let result = '';
-  const findNode = (node: LTLNode): void => {
-    if (result) return;
-    if (node.type === 'PROPOSITION') {
-      if (currentIndex === index) {
-        result = node.variableId || '';
-      }
-      currentIndex++;
-      return;
-    }
-    if (node.children) node.children.forEach(findNode);
-  };
-  findNode(formulaState());
-  return result || 'p';
+  return getPropAtIndex(formulaState(), index);
 }
 
 export function addBinaryToProposition(type: 'AND' | 'OR' | 'UNTIL') {
@@ -213,28 +179,7 @@ export function removeProposition(targetIndex: number) {
     return;
   }
 
-  const path: { node: LTLNode; childIndex: number }[] = [];
-  let currentIndex = 0;
-
-  const findPath = (node: LTLNode): boolean => {
-    if (node.type === 'PROPOSITION') {
-      if (currentIndex === targetIndex) {
-        return true;
-      }
-      currentIndex++;
-      return false;
-    }
-    if (node.children) {
-      for (let i = 0; i < node.children.length; i++) {
-        path.push({ node, childIndex: i });
-        if (findPath(node.children[i])) return true;
-        path.pop();
-      }
-    }
-    return false;
-  };
-
-  findPath(root);
+  const path = findPathToProposition(root, targetIndex);
 
   if (path.length === 0) {
     formulaState.set({ type: 'PROPOSITION', variableId: 'p', children: [] });

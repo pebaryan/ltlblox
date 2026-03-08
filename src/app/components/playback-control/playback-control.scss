@@ -79,3 +79,35 @@
     border-radius: 2px;
   }
 }
+
+.keyboard-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 10px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: #aaa;
+
+  .hint-icon {
+    font-size: 0.85rem;
+  }
+
+  .hint-text {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+
+    kbd {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: #fff;
+    }
+  }
+}

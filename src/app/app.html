@@ -16,3 +16,10 @@
   <app-trace-editor />
   <app-playback-control />
 </div>
+
+<!-- Toast Container -->
+<div class="toast-container">
+  @for (toast of toastService.toastQueue(); track toast.id) {
+    <app-toast [message]="toast.message" [type]="toast.type" />
+  }
+</div>

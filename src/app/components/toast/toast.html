@@ -1,0 +1,11 @@
+<div class="toast toast-{{ type }}">
+  <span class="toast-icon">
+    @switch (type) {
+      @case ('success') {✓}
+      @case ('error') {✗}
+      @case ('warning') {⚠}
+      @default {ℹ}
+    }
+  </span>
+  <span class="toast-message">{{ message() }}</span>
+</div>

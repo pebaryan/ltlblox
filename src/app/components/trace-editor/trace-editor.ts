@@ -1,6 +1,7 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { currentTime } from '../../state/formula';
 import { removeVariable, traceState, traceVariables, addTimeStep, removeTimeStep } from '../../state/trace';
+import { ToastService } from '../../core/toast.service';
 
 function sanitizeVarName(input: string): string {
   let sanitized = input.trim().toLowerCase();
@@ -24,6 +25,7 @@ export class TraceEditor {
   public currentTime = currentTime;
   trace = traceState;
   time = currentTime;
+  private toastService = inject(ToastService);
 
   variables = computed(() => Object.keys(this.trace()[0] || {}));
 
@@ -50,8 +52,10 @@ export class TraceEditor {
   deleteVar(varName: string) {
     if (this.traceVariables().length > 1) {
       removeVariable(varName);
+      this.toastService.show(`Variable '${varName}' removed`, 'success');
+    } else {
+      this.toastService.show('At least one variable is required', 'error');
     }
-    else alert('at least one variable');
   }
 
   addNewVariable() {
@@ -61,12 +65,12 @@ export class TraceEditor {
     const sanitized = sanitizeVarName(name);
     
     if (!sanitized) {
-      alert('Invalid variable name');
+      this.toastService.show('Invalid variable name', 'error');
       return;
     }
     
     if (this.traceVariables().includes(sanitized)) {
-      alert(`Variable '${sanitized}' already exists`);
+      this.toastService.show(`Variable '${sanitized}' already exists`, 'error');
       return;
     }
     
@@ -76,6 +80,8 @@ export class TraceEditor {
         [sanitized]: false,
       }))
     );
+    
+    this.toastService.show(`Variable '${sanitized}' added`, 'success');
   }
 
   addTime() {

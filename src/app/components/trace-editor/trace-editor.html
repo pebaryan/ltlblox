@@ -1,40 +1,63 @@
-<div class="trace-editor trace-container">
+<div class="trace-editor trace-container" role="region" aria-label="Trace Editor">
   <div class="trace-header">
-    <h3>Trace</h3>
-    <div class="time-controls">
-      <button class="time-btn" (click)="removeTime()">-</button>
-      <span class="time-count">{{ traceState().length }}</span>
-      <button class="time-btn" (click)="addTime()">+</button>
+    <h3>Trace Editor</h3>
+    <div class="time-controls" role="group" aria-label="Time step controls">
+      <button 
+        class="time-btn" 
+        [attr.aria-label]="'Remove time step, current count is ' + traceState().length"
+        (click)="removeTime()">
+        <span aria-hidden="true">−</span>
+      </button>
+      <span class="time-count" aria-live="polite">{{ traceState().length }} time steps</span>
+      <button 
+        class="time-btn" 
+        [attr.aria-label]="'Add time step, current count is ' + traceState().length"
+        (click)="addTime()">
+        <span aria-hidden="true">+</span>
+      </button>
     </div>
   </div>
-  <div class="timeline-grid">
+  <div class="timeline-grid" role="grid" aria-label="Trace data grid">
     <div class="row header">
-      <div class="label">Var / Time</div>
+      <div class="label">Variable / Time Step</div>
       @for (step of traceState(); track $index) {
-        <div class="time-index" [class.active]="currentTime() === $index">
+        <div 
+          class="time-index" 
+          [class.active]="currentTime() === $index"
+          [attr.aria-label]="'Time step ' + $index + (currentTime() === $index ? ' - current' : '')">
           {{ $index }}
         </div>
       }
     </div>
 
     @for (varName of traceVariables(); track varName) {
-      <div class="row">
+      <div class="row" role="row">
         <div class="label">
           {{ varName }}
-          <button class="delete-var-btn" (click)="deleteVar(varName)">×</button>
+          <button 
+            class="delete-var-btn" 
+            [attr.aria-label]="'Delete variable ' + varName"
+            (click)="deleteVar(varName)">
+            <span aria-hidden="true">×</span>
+          </button>
         </div>
         @for (step of traceState(); track $index) {
           <div 
             class="cell"
+            role="gridcell"
+            [attr.aria-label]="'Variable ' + varName + ' at time step ' + $index + ': ' + (step[varName] ? 'true' : 'false')"
+            [attr.aria-pressed]="step[varName]"
             [class.active]="currentTime() === $index"
             [class.true]="step[varName]"
             (click)="toggleStep($index, varName)">
-            <div class="led"></div>
+            <div class="led" aria-hidden="true"></div>
           </div>
         }
       </div>
     }
   </div>
   
-  <button class="add-var-btn" (click)="addNewVariable()">+ Add Variable</button>
+  <button class="add-var-btn" (click)="addNewVariable()" aria-label="Add new variable to trace">
+    + Add Variable
+  </button>
 </div>

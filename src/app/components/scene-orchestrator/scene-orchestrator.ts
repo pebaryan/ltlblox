@@ -5,7 +5,7 @@ import { LtlEvaluator, LTLNode } from '../../core/ltl-evaluator';
 import { LegoBlock } from '../lego-block/lego-block';
 import { LogicLink } from '../logic-link/logic-link';
 import { TimelineRail } from '../timeline-rail/timeline-rail';
-import { flattenFormula, calculateBlockWidths, FlatBlock, blockHeight } from '../../core/formula-utils';
+import { flattenFormula, calculateBlockWidths, FlatBlock, blockHeight, getTreeDepth } from '../../core/formula-utils';
 import { traceState } from '../../state/trace';
 
 @Component({
@@ -21,19 +21,11 @@ export class SceneOrchestrator {
 
   flatFormula = computed(() => {
     const root = formulaState();
-    console.log('Current formula root:', root);
-    const depth = this.getTreeDepth(root);
+    const depth = getTreeDepth(root);
     const startY = depth * blockHeight;
-    console.log('Tree depth:', depth, 'Start Y:', startY);
     const blocks = flattenFormula(root, currentTime(), startY, 0);
-    console.log('Flattened blocks:', blocks);
     return calculateBlockWidths(blocks);
   });
-
-  getTreeDepth(node: LTLNode): number {
-    if (!node.children || node.children.length === 0) return 1;
-    return 1 + Math.max(...node.children.map((c) => this.getTreeDepth(c)));
-  }
 
   checkLogic(node: LTLNode) {
     const trace = traceState();
@@ -43,46 +35,30 @@ export class SceneOrchestrator {
   }
 
   findSatisfyingTime(node: LTLNode): number {
-    if (!node || node.type !== 'EVENTUALLY' || !node.children?.[0]) {
+    if (!node || !node.children?.[0]) {
       return currentTime();
     }
     const trace = traceState();
     const t = currentTime();
-    for (let i = t; i < trace.length; i++) {
-      if (this.ltlService.evaluate(node.children![0], trace, i)) return i;
-    }
-    return t;
+    const result = this.ltlService.findSatisfyingIndex(node, trace, t);
+    return result ?? t;
   }
 
   getAlwaysSteps(startIdx: number): number[] {
     const trace = traceState();
-    const steps: number[] = [];
-    for (let i = startIdx; i < trace.length; i++) {
-      steps.push(i);
-    }
-    return steps;
+    return Array.from({ length: trace.length - startIdx }, (_, i) => startIdx + i);
   }
 
   findUntilEnd(node: LTLNode): number {
     const trace = traceState();
     const startTime = currentTime();
-    const [p, q] = node.children!;
-
-    for (let t = startTime; t < trace.length; t++) {
-      if (this.ltlService.evaluate(q, trace, t)) {
-        return t;
-      }
-      if (!this.ltlService.evaluate(p, trace, t)) {
-        break;
-      }
-    }
-    return startTime;
+    return this.ltlService.findUntilBreakPoint(node, trace, startTime);
   }
 
   constructor() {
+    // Time tracking effect - logs removed for production
     effect(() => {
       const t = currentTime();
-      console.log('The time changed to:', t);
     });
   }
 }

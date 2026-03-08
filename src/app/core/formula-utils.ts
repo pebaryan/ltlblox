@@ -1,19 +1,43 @@
 import { LTLNode } from './ltl-evaluator';
+import { CONSTANTS } from './constants';
 
+/**
+ * Represents a flattened block in the 3D LTL formula visualization.
+ */
 export interface FlatBlock {
+  /** The LTL node this block represents */
   node: LTLNode;
+  /** 3D position [x, y, z] in the scene */
   position: [number, number, number];
+  /** Shape type: proposition box, unary operator, or binary operator */
   shape: 'box' | 'unary' | 'binary';
+  /** Width of the block */
   width: number;
+  /** Indices of child blocks */
   children: number[];
+  /** Z positions of children (for binary/unary operators) */
   childZ?: number[];
+  /** Maximum child width (for binary/unary operators) */
   childWidth?: number;
 }
 
-export const blockHeight = 0.6;
-export const propositionWidth = 0.8;
-export const operatorExtendedWidth = 2 * propositionWidth;
+/** Height of each block level in the visualization */
+export const blockHeight = CONSTANTS.blockHeight;
+/** Width of proposition blocks */
+export const propositionWidth = CONSTANTS.propositionWidth;
+/** Extended width for operator blocks */
+export const operatorExtendedWidth = CONSTANTS.operatorExtendedWidth;
 
+/**
+ * Recursively flattens an LTL formula tree into a list of 3D blocks for visualization.
+ * @param node - The LTL node to flatten
+ * @param x - X coordinate (time step)
+ * @param y - Y coordinate (vertical position based on depth)
+ * @param z - Initial Z coordinate
+ * @param list - Accumulator list for blocks (internal use)
+ * @param parentIndex - Index of parent block in the list (internal use)
+ * @returns Array of flat blocks with positions and relationships
+ */
 export function flattenFormula(
   node: LTLNode,
   x: number,
@@ -70,6 +94,12 @@ export function flattenFormula(
   return list;
 }
 
+/**
+ * Calculates and assigns proper widths to blocks based on their children.
+ * Processes blocks recursively to determine optimal spacing.
+ * @param blocks - Array of flat blocks to process
+ * @returns The same array with width and position properties calculated
+ */
 export function calculateBlockWidths(blocks: FlatBlock[]): FlatBlock[] {
   const processed = new Set<number>();
   let startZ: number = 0;
@@ -122,20 +152,27 @@ export function calculateBlockWidths(blocks: FlatBlock[]): FlatBlock[] {
       processBlock(index);
     }
   });
-  console.log('Total width needed:', startZ);
   blocks.forEach((_, index) => {
     blocks[index].position[2] -= (startZ / 2);
   });
-
-  console.log(blocks)
   return blocks;
 }
 
+/**
+ * Calculates the maximum depth of an LTL formula tree.
+ * @param node - The root node of the formula
+ * @returns The depth of the tree (1 for leaf nodes)
+ */
 export function getTreeDepth(node: LTLNode): number {
   if (!node.children || node.children.length === 0) return 1;
   return 1 + Math.max(...node.children.map(getTreeDepth));
 }
 
+/**
+ * Counts the total number of nodes in an LTL formula tree.
+ * @param node - The root node of the formula
+ * @returns Total node count including all operators and propositions
+ */
 export function getNodeCount(node: LTLNode): number {
   let count = 1;
   if (node.children) {

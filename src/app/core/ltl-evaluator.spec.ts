@@ -239,6 +239,70 @@ describe('LtlEvaluator', () => {
       expect(service.findSatisfyingIndex(eventuallyNode, trace, 2)).toBe(2);
       expect(service.findSatisfyingIndex(eventuallyNode, trace, 3)).toBe(null);
     });
+
+    it('should find NEXT satisfaction at t+1', () => {
+      const qNode: LTLNode = { type: 'PROPOSITION', variableId: 'q' };
+      const nextNode: LTLNode = { type: 'NEXT', children: [qNode] };
+
+      // q is true at t=1
+      expect(service.findSatisfyingIndex(nextNode, trace, 0)).toBe(1);
+      // q is true at t=2
+      expect(service.findSatisfyingIndex(nextNode, trace, 1)).toBe(2);
+      // q is false at t=4 (out of bounds)
+      expect(service.findSatisfyingIndex(nextNode, trace, 3)).toBe(null);
+    });
+
+    it('should find ALWAYS break point', () => {
+      const pNode: LTLNode = { type: 'PROPOSITION', variableId: 'p' };
+      const alwaysNode: LTLNode = { type: 'ALWAYS', children: [pNode] };
+
+      // p is true at t=0, false at t=1, so break at t=1
+      expect(service.findSatisfyingIndex(alwaysNode, trace, 0)).toBe(1);
+      // p is false at t=1, so break at t=1
+      expect(service.findSatisfyingIndex(alwaysNode, trace, 1)).toBe(1);
+    });
+
+    it('should find UNTIL satisfaction', () => {
+      const pNode: LTLNode = { type: 'PROPOSITION', variableId: 'p' };
+      const qNode: LTLNode = { type: 'PROPOSITION', variableId: 'q' };
+      const untilNode: LTLNode = { type: 'UNTIL', children: [pNode, qNode] };
+
+      // q becomes true at t=1 while p held at t=0
+      expect(service.findSatisfyingIndex(untilNode, trace, 0)).toBe(1);
+    });
+  });
+
+  describe('findUntilBreakPoint', () => {
+    it('should return when Q becomes true', () => {
+      const pNode: LTLNode = { type: 'PROPOSITION', variableId: 'p' };
+      const qNode: LTLNode = { type: 'PROPOSITION', variableId: 'q' };
+      const untilNode: LTLNode = { type: 'UNTIL', children: [pNode, qNode] };
+
+      // q becomes true at t=1
+      expect(service.findUntilBreakPoint(untilNode, trace, 0)).toBe(1);
+    });
+
+    it('should return when P becomes false', () => {
+      const trace2: Trace = [
+        { p: true, q: false },
+        { p: false, q: false },
+        { p: false, q: true },
+      ];
+      const pNode: LTLNode = { type: 'PROPOSITION', variableId: 'p' };
+      const qNode: LTLNode = { type: 'PROPOSITION', variableId: 'q' };
+      const untilNode: LTLNode = { type: 'UNTIL', children: [pNode, qNode] };
+
+      // p becomes false at t=1 before q becomes true
+      expect(service.findUntilBreakPoint(untilNode, trace2, 0)).toBe(1);
+    });
+
+    it('should return start time when no break point found', () => {
+      const pNode: LTLNode = { type: 'PROPOSITION', variableId: 'p' };
+      const qNode: LTLNode = { type: 'PROPOSITION', variableId: 'q' };
+      const untilNode: LTLNode = { type: 'UNTIL', children: [pNode, qNode] };
+
+      expect(service.findUntilBreakPoint(untilNode, trace, 3)).toBe(3);
+    });
   });
 
   describe('edge cases', () => {

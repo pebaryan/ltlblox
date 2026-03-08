@@ -1,29 +1,34 @@
-<div class="logic-palette">
+<div class="logic-palette" role="region" aria-label="LTL Formula Constructor">
   <h3>LTL Constructor</h3>
   
   <div class="formula-code">
-    <code [innerHTML]="highlightedFormula()"></code>
+    <code [innerHTML]="highlightedFormula()" aria-live="polite"></code>
   </div>
 
   <div class="variable-selector">
     <span>Edit Proposition:</span>
-    <div class="prop-selector">
+    <div class="prop-selector" role="group" aria-label="Proposition selectors">
       @for (prop of propositionIndices(); track $index) {
         <div class="prop-item">
           <button 
             [class.selected]="selectedIndex() === $index"
+            [attr.aria-label]="'Select proposition ' + $index"
             (click)="selectProposition($index)">
             P{{ $index }}
           </button>
-          <button class="remove-prop-btn" (click)="removeProp($index)">×</button>
+          <button 
+            class="remove-prop-btn" 
+            [attr.aria-label]="'Remove proposition ' + $index"
+            (click)="removeProp($index)">×</button>
         </div>
       }
     </div>
     <span>Set Value:</span>
-    <div class="var-chips">
+    <div class="var-chips" role="group" aria-label="Variable value selectors">
       @for (v of availableVars(); track v) {
         <button 
           [class.active]="currentVar() === v"
+          [attr.aria-label]="'Set variable to ' + v"
           (click)="setVar(v)">
           {{ v }}
         </button>
@@ -36,41 +41,42 @@
   <div class="wrap-toggle">
     <button 
       [class.active]="wrapWholeFormula()"
+      [attr.aria-label]="'Wrap mode: ' + (wrapWholeFormula() ? 'Whole Formula' : 'Focused Prop')"
       (click)="toggleWrapMode()">
-      <span class="toggle-indicator"></span>
+      <span class="toggle-indicator" aria-hidden="true"></span>
       Wrap: {{ wrapWholeFormula() ? 'Whole Formula' : 'Focused Prop' }}
     </button>
   </div>
 
   <div class="button-grid">
-    <button class="btn-always" (click)="addAlways()">
+    <button class="btn-always" (click)="addAlways()" aria-label="Wrap formula with Always operator">
       □ <span>Always</span>
     </button>
-    <button class="btn-eventually" (click)="addEventually()">
+    <button class="btn-eventually" (click)="addEventually()" aria-label="Wrap formula with Eventually operator">
       ◇ <span>Eventually</span>
     </button>
-    <button class="btn-next" (click)="addNext()">
+    <button class="btn-next" (click)="addNext()" aria-label="Wrap formula with Next operator">
       ○ <span>Next</span>
     </button>
-    <button class="btn-not" (click)="addNot()">
+    <button class="btn-not" (click)="addNot()" aria-label="Wrap formula with Not operator">
       ¬ <span>Not</span>
     </button>
 
-    <button class="btn-and" (click)="addAnd()">
+    <button class="btn-and" (click)="addAnd()" aria-label="Add AND operator to formula">
       ∧ <span>And</span>
     </button>
-    <button class="btn-or" (click)="addOr()">
+    <button class="btn-or" (click)="addOr()" aria-label="Add OR operator to formula">
       ∨ <span>Or</span>
     </button>
-    <button class="btn-until" (click)="addUntil()">
+    <button class="btn-until" (click)="addUntil()" aria-label="Add Until operator to formula">
       𝒰 <span>Until</span>
     </button>
 
-    <button (click)="reset(currentVar())">
+    <button (click)="reset(currentVar())" aria-label="Reset formula to current variable">
       {{ currentVar() }} <span>Prop</span>
     </button>
 
-    <button class="btn-full" (click)="reset(firstVar())">
+    <button class="btn-full" (click)="reset(firstVar())" aria-label="Reset formula to default variable">
       RESET TO {{ firstVar() | uppercase }}
     </button>
   </div>

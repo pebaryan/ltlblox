@@ -99,6 +99,13 @@ export class LogicLink {
     curve.tension = 0;
 
     if (mesh.geometry) mesh.geometry.dispose();
+    if (mesh.material) {
+      if (Array.isArray(mesh.material)) {
+        mesh.material.forEach(m => m.dispose());
+      } else {
+        mesh.material.dispose();
+      }
+    }
     mesh.geometry = new THREE.TubeGeometry(curve, 64, 0.05, 8, false);
   }
 
@@ -127,10 +134,14 @@ export class LogicLink {
         const curve = new THREE.CatmullRomCurve3(points);
         curve.curveType = 'catmullrom';
         curve.tension = 0;
-        // 1. Dispose old geometry to prevent memory leaks
-        mesh.geometry.dispose();
-
-        // 2. Create brand new geometry from new path
+        if (mesh.geometry) mesh.geometry.dispose();
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach(m => m.dispose());
+          } else {
+            mesh.material.dispose();
+          }
+        }
         mesh.geometry = new THREE.TubeGeometry(curve, 64, 0.05, 8, false);
 
         // 3. Mark for update
@@ -168,7 +179,14 @@ export class LogicLink {
     curve.curveType = 'catmullrom';
     curve.tension = 0;
 
-    mesh.geometry.dispose();
+    if (mesh.geometry) mesh.geometry.dispose();
+    if (mesh.material) {
+      if (Array.isArray(mesh.material)) {
+        mesh.material.forEach(m => m.dispose());
+      } else {
+        mesh.material.dispose();
+      }
+    }
     mesh.geometry = new THREE.TubeGeometry(curve, 64, 0.07, 8, false);
   }
 }
