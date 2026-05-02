@@ -1,6 +1,6 @@
-<div class="toast toast-{{ type }}">
+<div class="toast toast-{{ type() }}">
   <span class="toast-icon">
-    @switch (type) {
+    @switch (type()) {
       @case ('success') {✓}
       @case ('error') {✗}
       @case ('warning') {⚠}

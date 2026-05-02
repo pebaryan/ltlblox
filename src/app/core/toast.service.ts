@@ -12,7 +12,7 @@ export interface ToastMessage {
 })
 export class ToastService {
   public toastQueue = signal<ToastMessage[]>([]);
-  private toastTimeouts = new Map<number, NodeJS.Timeout>();
+  private toastTimeouts = new Map<number, ReturnType<typeof setTimeout>>();
   private toastIdCounter = 0;
 
   constructor() {
